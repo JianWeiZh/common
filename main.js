@@ -11,10 +11,34 @@
             window.$ = $.extend(window.$, factory(golden))
         }
     }
-
-
 })(window, function () {
     var plus = {}
+    /**
+     * 存储localStorage
+     */
+    plus.setLocalStore = (name, content) => {
+      if (!name) return;
+      if (typeof content !== 'string') {
+        content = JSON.stringify(content);
+      }
+      window.localStorage.setItem(name, content);
+    }
+
+    /**
+     * 获取localStorage
+     */
+    plus.getLocalStore = name => {
+      if (!name) return;
+      return window.localStorage.getItem(name);
+    }
+
+    /**
+     * 删除localStorage
+     */
+    plus.removeLocalStore = name => {
+      if (!name) return;
+      window.localStorage.removeItem(name);
+    }
     //判断是否为微信
     plus.is_weixin = function () {
         var ua = navigator.userAgent.toLowerCase();
@@ -31,6 +55,20 @@
         var r = window.location.search.substr(1).match(reg);
         if (r != null) return unescape(r[2]);
         return ''
+    }
+
+
+    /**
+     * 获取地址栏参数
+     * @param name
+     * @returns {string}
+     */
+    plus.getQueryStringByName = function (name) {
+      var result = document.location.search.match(new RegExp('[\?\&]' + name + '=([^\&]+)', 'i'))
+      if (result == null || result.length < 1) {
+        return ''
+      }
+      return result[1]
     }
 
     plus.getUrlObject = function (url) {
@@ -244,3 +282,36 @@
     return plus
 
 });
+
+/*
+ sessionStorage & localStorage 封装
+ @param storageName [String] // 默认sessionStorage
+*/
+export default class {
+  constructor(storageName) {
+    this.storage = storageName || 'sessionStorage'
+  }
+  setItem(key, val) {
+    const storage = window[this.storage]
+    storage.setItem(key, typeof val === 'object' ? JSON.stringify(val) : val)
+  }
+  getItem(key) {
+    const storage = window[this.storage]
+    const val = storage.getItem(key)
+    let rst
+    try {
+      rst = JSON.parse(val)
+    } catch (err) {
+      rst = val
+    }
+    return rst
+  }
+  removeItem(key) {
+    const storage = window[this.storage]
+    storage.removeItem(key)
+  }
+  clear() {
+    const storage = window[this.storage]
+    storage.clear()
+  }
+}
