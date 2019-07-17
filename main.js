@@ -315,3 +315,16 @@ export default class {
     storage.clear()
   }
 }
+
+/*
+*获取url参数，支持传值方式
+*/
+const getQuerydata = (url) => {
+    const locationUrl = url ? decodeURIComponent(url) : decodeURIComponent(window.location.href)
+    const pattern = /(\w+)=(\w+)/ig
+    let params = {}
+    locationUrl.replace(pattern, function (a, b, c) {
+        params[b] = c
+    })
+    return params
+}
