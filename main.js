@@ -321,7 +321,7 @@ export default class {
 */
 const getQuerydata = (url) => {
     const locationUrl = url ? decodeURIComponent(url) : decodeURIComponent(window.location.href)
-    const pattern = /(\w+)=(\w+)/ig
+    const pattern = /([^\?\=&#]+)=([^\?\=&#]+)/ig
     let params = {}
     locationUrl.replace(pattern, function (a, b, c) {
         params[b] = c
